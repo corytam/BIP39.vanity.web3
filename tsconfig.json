@@ -1,15 +1,33 @@
 {
   "compilerOptions": {
-    "declaration": true,
-    "importHelpers": true,
-    "module": "commonjs",
+    /* Base Options */
     "esModuleInterop": true,
-    "outDir": "dist",
-    "rootDir": "src",
+    "skipLibCheck": true,
+    "target": "es2020",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+    "isolatedModules": true,
+
+    /* Strictness */
     "strict": true,
-    "target": "es2019"
+    "noUncheckedIndexedAccess": true,
+    "noImplicitAny": true,
+
+    /* Module Resolution */
+    "module": "commonjs",
+    "moduleResolution": "node", // <-- THIS IS THE MOST IMPORTANT LINE FOR YOUR ERROR
+
+    /* Output */
+    "outDir": "lib",
+    "sourceMap": true,
+
+    /* Type Roots for checking types */
+    "baseUrl": ".",
+    "paths": {
+      "*": ["node_modules/*", "src/types/*"]
+    }
   },
-  "include": [
-    "src/**/*"
-  ]
+  "include": ["src/**/*"], // Tell TypeScript to only look at files in the src folder
+  "exclude": ["node_modules"]
 }

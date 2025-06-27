@@ -1,21 +1,27 @@
+# Override instructions
+
+# After forking , run the following as exampe
+
+.\bin\dev.cmd address TP -c tron -s -o output.txt
+
 # vanity.web3
 
-Vanity address generator for web3 in command line.
+24 BIP39 compliant Vanity address generator for web3 in command line.
 
 Supports EVM-Chains(Ethereum, Binance Smart Chain, Polygon, Avalanche etc, and it's contract address), Solana, Tron and Aptos.
 
 Examples:
 
-- EVM: `0xbbBBF4d7FDF3E6993218FC8Cbd5975E34BB47777`
-- Solana: `SoLQCis48RxKMYKL26gBJDyofzVUweQd66S3xD8t4MS`
-- Contract Address: [`0x000007b812f197453E29819fb0B4EC543119e33E`](https://ropsten.etherscan.io/tx/0xd36e988000f962a0320feef17cd2ce7d6ff49d42f44e495edd616cac88ab10ef) created by private key `84c8745d552640833096ff7b7982f2cf9862b48610e2a1bb25fe53250f1f8b71`
-- Tron: `TRXonvpjGWKgu4MQdJHJhQN6mtmjFkM7HX`, `0xAAB43D4E91EBC9A2e475b80BE725F8791C4e3C7d`
-- Aptos: `0x000000616a48469384a03540e9b391d9753c1e2cde382d058a58975585fca596`
+-   EVM: `0xbbBBF4d7FDF3E6993218FC8Cbd5975E34BB47777`
+-   Solana: `SoLQCis48RxKMYKL26gBJDyofzVUweQd66S3xD8t4MS`
+-   Contract Address: [`0x000007b812f197453E29819fb0B4EC543119e33E`](https://ropsten.etherscan.io/tx/0xd36e988000f962a0320feef17cd2ce7d6ff49d42f44e495edd616cac88ab10ef) created by private key `84c8745d552640833096ff7b7982f2cf9862b48610e2a1bb25fe53250f1f8b71`
+-   Tron: `TRXonvpjGWKgu4MQdJHJhQN6mtmjFkM7HX`, `0xAAB43D4E91EBC9A2e475b80BE725F8791C4e3C7d`
+-   Aptos: `0x000000616a48469384a03540e9b391d9753c1e2cde382d058a58975585fca596`
 
 ## Installation
 
-- NPM: `npm install -g vanity.web3`
-- Yarn: `yarn global add vanity.web3`
+-   NPM: `npm install -g vanity.web3`
+-   Yarn: `yarn global add vanity.web3`
 
 ## Usage
 
@@ -72,8 +78,8 @@ EXAMPLES
 
 ## Donate
 
-| ETH: `0xbbBBF4d7FDF3E6993218FC8Cbd5975E34BB47777` | SOL: `SoLQCis48RxKMYKL26gBJDyofzVUweQd66S3xD8t4MS` |
-| :-------------------: | :-------------------: |
+|                                                               ETH: `0xbbBBF4d7FDF3E6993218FC8Cbd5975E34BB47777`                                                                |                                                               SOL: `SoLQCis48RxKMYKL26gBJDyofzVUweQd66S3xD8t4MS`                                                                |
+| :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
 | <img src="https://user-images.githubusercontent.com/5813232/184662542-23314cbb-e949-4ae9-b6b2-26af134c68ee.png" alt="0xbbBBF4d7FDF3E6993218FC8Cbd5975E34BB47777" width="270"/> | <img src="https://user-images.githubusercontent.com/5813232/184808707-00f59179-fd85-4a60-a65e-a923769d6f7f.png" alt="SoLQCis48RxKMYKL26gBJDyofzVUweQd66S3xD8t4MS" width="270"/> |
 
 ## License

@@ -13,6 +13,7 @@ import * as RLP from 'rlp';
 import { keccak256 } from 'ethereum-cryptography/keccak';
 import { sha256 } from 'ethereum-cryptography/sha256';
 import { OutputFlags } from '@oclif/core/lib/interfaces';
+import { Wallet, getAddress, Mnemonic } from 'ethers';
 
 const HEX_CHARS = '0123456789ABCDEFabcdef';
 const BASE58_ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
@@ -120,6 +121,20 @@ export default class Address extends Command {
             let count = 0;
             for (let i = 0; i < workers; i++) {
                 const child = cluster.fork();
+                // V-- FIX: Listen for 'exit' instead of 'message' --V
+                child.on('exit', () => {
+                    count++;
+                    this.log(`Vanity address #${count} found and saved.`);
+                    if (count >= num) {
+                        this.log('All requested addresses have been generated. Exiting.');
+                        // Kill any remaining workers
+                        for (const id in cluster.workers) {
+                            cluster.workers[id]?.process.kill();
+                        }
+                    }
+                });
+
+                /*
                 child.on('message', (message: any) => {
                     if (message.generated) {
                         count++;
@@ -129,10 +144,10 @@ export default class Address extends Command {
                             }
                         }
                     }
-                });
+                });*/
             }
         } else {
-            const { address, privateKey, publicKey, contract, evmAddress } = generator(prefixes, suffixes, flags);
+            const { address, privateKey, publicKey, contract, evmAddress , mnemonic } = generator(prefixes, suffixes, flags);
 
             notify({
                 title: 'Vanity Address Generated',
@@ -149,6 +164,9 @@ export default class Address extends Command {
             }
             if (!!publicKey) {
                 content += `\n${'Public Key: '.padEnd(18)}${publicKey}`;
+            }
+            if (!!mnemonic) {
+                content += `\n${'24-Word Phrase: '.padEnd(20)}${mnemonic}`;
             }
             content += `\n${'Private Key: '.padEnd(18)}${privateKey}\n`;
 
@@ -213,23 +231,39 @@ function toTronAddress(address: string) {
 }
 
 function generateEvmAddress(prefixes: string[], suffixes: string[], flags: OutputFlags<any>): any {
+    // We need to declare all variables that will be used outside the loop
     let address = '';
-    let privateKey, contract, evmAddress;
+    let privateKey = '';
+    let contract, evmAddress;
+    let mnemonicPhrase = ''; // The variable for our 24 words
+
+    if (flags.contract) {
+        throw new Error('BIP39 mnemonic generation is not supported for contract addresses with this script.');
+    }
+    
     do {
-        privateKey = randomBytes(32);
-        address = privateToAddress(privateKey).toString('hex');
+        // 1. Generate 256 bits (32 bytes) of entropy for a 24-word phrase
+        const entropy = randomBytes(32);
+
+        // 2. Create the Mnemonic object from the entropy
+        const mnemonic = Mnemonic.fromEntropy(entropy);
+
+        // 3. Create the wallet from the new 24-word phrase
+        const wallet = Wallet.fromPhrase(mnemonic.phrase);
+        
+        const tempAddress = wallet.address.substring(2);
+        privateKey = wallet.privateKey;
+        mnemonicPhrase = wallet.mnemonic!.phrase;
+
         if (flags.chain === 'tron') {
-            evmAddress = toChecksumAddress('0x' + address);
-            address = toTronAddress(address);
-            if (!flags.caseSensitive) {
-                address = address.toLowerCase();
-            }
+            evmAddress = wallet.address;
+            const tronAddress = toTronAddress(tempAddress.toLowerCase());
+            address = flags.caseSensitive ? tronAddress : tronAddress.toLowerCase();
         } else {
-            if (flags.contract) {
-                address = Buffer.from(keccak256(RLP.encode([privateToAddress(privateKey), 0])).slice(12)).toString('hex');
-            }
             if (flags.caseSensitive) {
-                address = toChecksumAddress('0x' + address).substring(2);
+                address = wallet.address.substring(2);
+            } else {
+                address = tempAddress.toLowerCase();
             }
         }
     } while (
@@ -237,17 +271,14 @@ function generateEvmAddress(prefixes: string[], suffixes: string[], flags: Outpu
         (suffixes.length > 0 && !suffixes.some((s) => address.endsWith(s)))
     );
 
-    if (flags.chain !== 'tron') {
-        if (flags.contract) {
-            contract = toChecksumAddress('0x' + address);
-        }
-        address = toChecksumAddress('0x' + privateToAddress(privateKey).toString('hex'));
-    } else {
+    // Prepare the final output
+    if (flags.chain === 'tron') {
         address = toTronAddress((evmAddress as string).substring(2).toLowerCase());
+    } else {
+        address = getAddress('0x' + privateToAddress(toBuffer(privateKey)).toString('hex'));
     }
-    privateKey = privateKey.toString('hex');
 
-    return { address, privateKey, contract, evmAddress };
+    return { address, privateKey, evmAddress, mnemonic: mnemonicPhrase };
 }
 
 function generateEd25519Address(prefixes: string[], suffixes: string[], flags: OutputFlags<any>): any {
