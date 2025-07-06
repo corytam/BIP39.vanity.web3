@@ -85,3 +85,37 @@ EXAMPLES
 ## License
 
 [MIT](./LICENSE)
+
+### USE WITH PROFANITY
+
+## For windows users
+
+## Install wsl and Unbuntu distribution
+
+## Go into Ubuntu terminal
+
+sudo apt update
+sudo apt install build-essential git
+
+## Clone profanity2
+
+git clone https://github.com/1inch/profanity2.git
+cd profanity2
+
+## Still in In Ubuntu terminal , Install the OpenCL Development Files requirecd for profanity
+
+sudo apt install ocl-icd-opencl-dev
+make clean
+make
+
+## Make sure default WSL distribution is Ubuntu , inside windows powershell enter
+
+wsl --set-default Ubuntu
+
+## Test command in Windows Powershell if it works
+
+wsl --exec /bin/bash -c "LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu /home/coryt/profanity2/profanity2 --help"
+
+## Now run following command to create seed phrase starting with TP
+
+.\bin\dev.cmd profanity --matching TP --chain tron -s --profanity-path "/home/coryt/profanity2/profanity2"

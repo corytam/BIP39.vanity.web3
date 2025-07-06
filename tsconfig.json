@@ -16,7 +16,7 @@
 
     /* Module Resolution */
     "module": "commonjs",
-    "moduleResolution": "node", // <-- THIS IS THE MOST IMPORTANT LINE FOR YOUR ERROR
+    "moduleResolution": "node",
 
     /* Output */
     "outDir": "lib",
