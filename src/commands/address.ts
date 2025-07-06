@@ -13,7 +13,7 @@ import * as RLP from 'rlp';
 import { keccak256 } from 'ethereum-cryptography/keccak';
 import { sha256 } from 'ethereum-cryptography/sha256';
 import { OutputFlags } from '@oclif/core/lib/interfaces';
-import { Wallet, getAddress, Mnemonic } from 'ethers';
+import { Wallet, getAddress, Mnemonic, HDNodeWallet } from 'ethers';
 
 const HEX_CHARS = '0123456789ABCDEFabcdef';
 const BASE58_ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
@@ -231,11 +231,10 @@ function toTronAddress(address: string) {
 }
 
 function generateEvmAddress(prefixes: string[], suffixes: string[], flags: OutputFlags<any>): any {
-    // We need to declare all variables that will be used outside the loop
     let address = '';
     let privateKey = '';
     let contract, evmAddress;
-    let mnemonicPhrase = ''; // The variable for our 24 words
+    let mnemonicPhrase = '';
 
     if (flags.contract) {
         throw new Error('BIP39 mnemonic generation is not supported for contract addresses with this script.');
@@ -248,12 +247,20 @@ function generateEvmAddress(prefixes: string[], suffixes: string[], flags: Outpu
         // 2. Create the Mnemonic object from the entropy
         const mnemonic = Mnemonic.fromEntropy(entropy);
 
-        // 3. Create the wallet from the new 24-word phrase
-        const wallet = Wallet.fromPhrase(mnemonic.phrase);
+        // 3. Create HDNodeWallet from mnemonic with proper derivation path
+        let wallet;
+        if (flags.chain === 'tron') {
+            // Use Tron's BIP44 derivation path: m/44'/195'/0'/0/0
+            const hdNode = HDNodeWallet.fromSeed(mnemonic.computeSeed());
+            wallet = hdNode.derivePath("m/44'/195'/0'/0/0");
+        } else {
+            // Use default derivation path for other EVM chains
+            wallet = Wallet.fromPhrase(mnemonic.phrase);
+        }
         
         const tempAddress = wallet.address.substring(2);
         privateKey = wallet.privateKey;
-        mnemonicPhrase = wallet.mnemonic!.phrase;
+        mnemonicPhrase = mnemonic.phrase;
 
         if (flags.chain === 'tron') {
             evmAddress = wallet.address;
