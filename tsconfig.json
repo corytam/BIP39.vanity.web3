@@ -19,7 +19,7 @@
     "moduleResolution": "node",
 
     /* Output */
-    "outDir": "lib",
+    "outDir": "dist",
     "sourceMap": true,
 
     /* Type Roots for checking types */

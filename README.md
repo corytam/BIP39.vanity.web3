@@ -1,10 +1,31 @@
-# Override instructions
+# THIS IS A HOBBY PROJECT , USE AT YOUR OWN RISK
 
-# After forking , run the following as exampe
+# ----- Override instructions --------
+
+# MULTIPLE SOLUTIONS CAN BE USED
+
+1. Address.ts
+2. Multithread (recommended)
+   3)tron-vanity-brute (archive)
+3. Profantity ( beta , untested)
+
+For mul[tithread just install all packagesand compile
+[Install]
+npm install
+
+[Compile files in commandline]
+npx tsc
+
+R[un from dist]
+node dist/multithread/master.js
+
+# After forking , run the following as example
 
 .\bin\dev.cmd address TP -c tron -s -o output.txt
 
-# vanity.web3
+# ---------END OVERRIDE--------
+
+# ------ vanity.web3-----------------
 
 24 BIP39 compliant Vanity address generator for web3 in command line.
 

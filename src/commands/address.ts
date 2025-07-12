@@ -166,7 +166,7 @@ export default class Address extends Command {
                 content += `\n${'Public Key: '.padEnd(18)}${publicKey}`;
             }
             if (!!mnemonic) {
-                content += `\n${'24-Word Phrase: '.padEnd(20)}${mnemonic}`;
+                content += `\n${'24-Word Phrase: '.padEnd(20)} \n${formatMnemonicTable(mnemonic)}`;
             }
             content += `\n${'Private Key: '.padEnd(18)}${privateKey}\n`;
 
@@ -321,3 +321,31 @@ function generateEd25519Address(prefixes: string[], suffixes: string[], flags: O
 
     return { address, privateKey, publicKey };
 }
+
+
+// Format mnemonic as 6 rows x 4 columns table, numbered properly
+function formatMnemonicTable(mnemonic: string): string {
+    const words = mnemonic.split(' ');
+    const rows = 6;
+    const cols = 4;
+  
+    const maxNumLength = 2;
+    const colWidth = 12;
+  
+    let result = '';
+  
+    for (let row = 0; row < rows; row++) {
+      let line = '';
+      for (let col = 0; col < cols; col++) {
+        const idx = row + col * rows;
+        if (idx < words.length) {
+          const w = words[idx]!;
+          const num = (idx + 1).toString().padEnd(maxNumLength);
+          const word = w.padEnd(colWidth - (maxNumLength + 3));
+          line += `${num}) ${word}  `;
+        }
+      }
+      result += line + '\n';
+    }
+    return result;
+  }
